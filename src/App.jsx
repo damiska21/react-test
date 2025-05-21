@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useState, useEffect } from 'react'
 import './App.css'
+import TodoItem from './TodoItem'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [area, setArea] = useState(() => 'Work') 
+  const [items, setItems] = useState(() => "")
+  //tady je to trochu goofy, ale ten inicialize runnuje jenom jednou
+  //typy arei: Work, Hobby, Home
 
+  //když je detekována změna odvětví todoček, tak se stáhnou a přepíšou
+  useEffect(()=> {
+    if (area === "Work") {
+      fetch('https://jsonplaceholder.typicode.com/users/1/todos')
+      .then(response => response.json())
+      .then(json => pullData(json))
+    }else if (area === "Hobby") {
+      fetch('https://jsonplaceholder.typicode.com/users/2/todos')
+      .then(response => response.json())
+      .then(json => pullData(json))
+    }else{
+      fetch('https://jsonplaceholder.typicode.com/users/3/todos')
+      .then(response => response.json())
+      .then(json => pullData(json))
+    }
+  }, [area])
+  //bere validní json odpověď a přeformátovává ji na <TodoItem/>
+  function pullData (json) {
+    let exporting = [];
+    let batchId = Math.random()*12;//bez tohohle se špatně updatovali completed checkboxy
+    for (let i = 0; i < json.length; i++) {
+      exporting.push(React.createElement(TodoItem, {key:i+batchId, title:"Id úkolu: "+json[i].id, description:json[i].title, done:json[i].completed}));
+    }
+    setItems(exporting)
+  }
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <button onClick={() =>setArea("Work")}>Práce</button>{/*tady to už goofy neni bez toho to nejede*/}
+      <button onClick={() =>setArea("Hobby")}>Koníčky</button>
+      <button onClick={() =>setArea("Home")}>Domácí práce</button>
+      <h1>Todo apka</h1>
+      <div className='todos'>{items}</div>
+    </> 
   )
 }
-
-export default App
