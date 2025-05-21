@@ -35,10 +35,12 @@ export default function App() {
   }
   return (
     <>
-      <button onClick={() =>setArea("Work")}>Práce</button>{/*tady to už goofy neni bez toho to nejede*/}
-      <button onClick={() =>setArea("Hobby")}>Koníčky</button>
-      <button onClick={() =>setArea("Home")}>Domácí práce</button>
       <h1>Todo apka</h1>
+      <div className='buttons'>
+        <button onClick={() =>setArea("Work")}>Práce</button>{/*tady to už goofy neni bez toho to nejede*/}
+        <button onClick={() =>setArea("Hobby")}>Koníčky</button>
+        <button onClick={() =>setArea("Home")}>Domácí práce</button>
+      </div>
       <div className='todos'>{items}</div>
     </> 
   )
